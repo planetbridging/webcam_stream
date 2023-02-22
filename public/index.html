@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Webcam Stream</title>
+  </head>
+  <body>
+    <video id="video" autoplay></video>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+
+      // Get the video element
+      const video = document.getElementById('video');
+
+      // Get the user's media devices
+      navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: false
+      })
+      .then(stream => {
+        // Set the source of the video element to be the user's webcam stream
+        video.srcObject = stream;
+
+        // Send new video frames to the server every 100ms
+        setInterval(() => {
+          const canvas = document.createElement('canvas');
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+          const dataURL = canvas.toDataURL('image/jpeg');
+
+          socket.emit('newFrame', dataURL);
+        }, 100);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+
+      // Receive new video frames from the server and display them
+      socket.on('newFrame', function(frame) {
+        video.src = frame;
+      });
+    </script>
+    <h1>hello</h1>
+  </body>
+</html>

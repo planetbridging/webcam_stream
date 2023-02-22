@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Webcam Stream</title>
+  </head>
+  <body>
+    <video id="video" autoplay></video>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+
+      // Get the video element
+      const video = document.getElementById('video');
+
+  
+
+      // Receive new video frames from the server and display them
+      socket.on('newFrame', function(frame) {
+        console.log("hello");
+        video.src = frame;
+      });
+    </script>
+    <h1>hello</h1>
+  </body>
+</html>
